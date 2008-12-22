@@ -4,7 +4,7 @@
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Gem which makes filling data for Gruff graphs based on ActiveRecord objects much easier.
 
 == FEATURES/PROBLEMS:
 
@@ -12,7 +12,54 @@ FIX (describe your package)
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+The simplies case (mosts are defaults - you probably won't use it):
+
+
+  class User < ActiveRecord::Base
+    active_graph :posts,
+      :series => {:submited_posts => {:value => :count_have_posts_between, :caption => "posts"}}
+      
+    def self.count_created_posts_between(min, max)
+      count(:all, :conditions => "posts_count #{(min..max).to_s(:db)}")
+    end
+  end
+
+Now, featured one. It will create a line graph, which
+ * starts at User.start_time,
+ * end one week later
+ * shows data with 1 day step
+ * defines x_axis with formated labels
+ * presents 2 data series
+
+
+  class User < ActiveRecord::Base
+  
+    active_graph :new_posts,
+      :type => :line,
+      :start => Proc.new {@@start_time},
+      :end => Proc.new { @@start_time + 1.week },
+      :step => 1.day,
+      :x_axis => {:interval => 3, :method => Proc.new {|time| time.strftime("%d-%m") }},
+      :series => {
+        :submited_posts => {:value => :count_have_posts_between, :caption => "posts"},
+        :submited_posts2 => {:value => :count_have_posts2_between, :caption => "posts2"}}
+      
+    def self.count_have_posts_between(min, max); end
+    def self.count_have_posts2_between(min, max); end
+    
+  end
+
+Now, create an action in your controller:
+
+  class UsersController < ApplicationController
+    def new_posts_graph
+      graph = User.new_posts_graph
+      send_data graph, :type => "image/png", :disposition => "inline",
+        :filename => "new_users_graph.png"
+    end
+  end
+
+graph is a normal Gruff object before rendering, so you can customize presentation.
 
 == REQUIREMENTS:
 
