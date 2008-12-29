@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
-module Gruff
+module Gruff # :nodoc:all
   module BasicMethods
     attr_accessor :labels
     attr_accessor :width
@@ -21,7 +21,7 @@ module Gruff
   end
 end
 
-class ActiveGraphTestModel
+class ActiveGraphTestModel # :nodoc:
   extend ActiveGraph::ActiveRecordExtension
   
   attr_accessor :start_time

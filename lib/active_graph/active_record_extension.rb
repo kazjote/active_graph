@@ -2,13 +2,31 @@ require 'rubygems'
 require 'metaid'
 
 module ActiveGraph
-  module Support
+  module Support # :nodoc:
     def self.valualize(value_or_proc)
       value_or_proc.is_a?(Proc) ? value_or_proc.call : value_or_proc
     end
   end
   
   module ActiveRecordExtension
+    # See README for examples and ActiveGraph for defaults.
+    #
+    # Available options are:
+    # * :start - proc or value - first value taken into consideration while creating a graph
+    # * :end - proc or value - last value
+    # * :step - x-axis step
+    # * :type - type of the graph (for example :line, :bar, see gruff documentation for other)
+    # * :width - target width of the image
+    # * :x_axis - options for x_axis
+    # * :series - data series
+    #
+    # x_axis is a hash with following keys allowed:
+    # * :interval - number of steps between two value labels
+    # * :method - proc which creates the label for particular x point
+    #
+    # series is a hash, which keys are the symbols of data series and value is a hash with following keys:
+    # * :value - symbol of the two argument method which gathers data for the graph
+    # * :caption - caption
     def active_graph(name, options)
       graph_start = options[:start] || ActiveGraph::DEFAULT_START
       graph_end = options[:end] || ActiveGraph::DEFAULT_END
