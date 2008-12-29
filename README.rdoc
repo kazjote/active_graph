@@ -1,6 +1,6 @@
 = active_graph
 
-* FIX (url)
+http://github.com/kazjote/active_graph/tree/master
 
 == DESCRIPTION:
 
@@ -8,7 +8,14 @@ Gem which makes filling data for Gruff graphs based on ActiveRecord objects much
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+Good points:
+* Ease of use
+* Flexible
+* Created in model but enable to customize presentation in controller
+
+Bad points:
+* Slow - requires many database calls (it is intended to create cacheable graphs)
+* Do not allow to customize options after model is loaded (TODO)
 
 == SYNOPSIS:
 
@@ -17,10 +24,10 @@ The simplies case (mosts are defaults - you probably won't use it):
 
   class User < ActiveRecord::Base
     active_graph :posts,
-      :series => {:submited_posts => {:value => :count_have_posts_between, :caption => "posts"}}
+        :series => {:submited_posts => {:value => :count_have_posts_between, :caption => "posts"}}
       
-    def self.count_created_posts_between(min, max)
-      count(:all, :conditions => "posts_count #{(min..max).to_s(:db)}")
+    def self.count_have_posts_between(min, max)
+      count(:all, :conditions => "posts_count > #{min} AND posts_count <= #{max}")
     end
   end
 
@@ -36,38 +43,66 @@ Now, featured one. It will create a line graph, which
   
     active_graph :new_posts,
       :type => :line,
-      :start => Proc.new {@@start_time},
-      :end => Proc.new { @@start_time + 1.week },
+      :start => Proc.new {@@start_time}, :end => Proc.new { @@start_time + 1.week },
       :step => 1.day,
       :x_axis => {:interval => 3, :method => Proc.new {|time| time.strftime("%d-%m") }},
-      :series => {
-        :submited_posts => {:value => :count_have_posts_between, :caption => "posts"},
+      :width => 100,
+      :series => {:submited_posts => {:value => :count_have_posts_between, :caption => "posts"},
         :submited_posts2 => {:value => :count_have_posts2_between, :caption => "posts2"}}
       
     def self.count_have_posts_between(min, max); end
     def self.count_have_posts2_between(min, max); end
     
   end
+  
+Statistic on user age?
+
+  active_graph :age, :type => :bar,
+    :start => 0, :end => 100, :step => 10,
+    :x_axis => {:interval => 1, :method => Proc.new {|age| "#{age}-#{age + 10}" }},
+    :series => {
+      :age => {:value => :count_aged_between, :caption => "Age" }
+    }
 
 Now, create an action in your controller:
 
   class UsersController < ApplicationController
     def new_posts_graph
       graph = User.new_posts_graph
-      send_data graph, :type => "image/png", :disposition => "inline",
+      send_data graph.to_blob, :type => "image/png", :disposition => "inline",
         :filename => "new_users_graph.png"
     end
   end
 
-graph is a normal Gruff object before rendering, so you can customize presentation.
+graph is a normal Gruff object, so you can customize presentation before rendering.
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* gem 'activesupport' >= 2.0.2
+* gem 'metaid' >= 1.0
+* gem 'gruff' >= 0.3.1
+
+It can run without Rails (testcase does not use rails at all).
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install active_graph
+
+In your envrionment.rb:
+  
+  config.gem "metaid"
+  config.gem "gruff"
+  config.gem "active_graph"
+  
+If you have older rails you can load it with initializer or directly in your model:
+  
+  require 'gruff'
+  require 'active_graph'
+  
+  class User < ActiveRecord::Base
+    extend ActiveGraph::ActiveRecordExtension
+    ...
+  end
 
 == LICENSE:
 
