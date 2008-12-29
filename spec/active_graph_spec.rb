@@ -3,8 +3,13 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 module Gruff
   module BasicMethods
     attr_accessor :labels
+    attr_accessor :width
     
     def data(label, data); end
+    
+    def initialize(width)
+      @width = width
+    end
   end
   
   class Bar
@@ -29,6 +34,7 @@ class ActiveGraphTestModel
     :start => Proc.new {@@start_time}, :end => Proc.new { @@start_time + 1.week },
     :step => 1.day,
     :x_axis => {:interval => 3, :method => Proc.new {|time| time.strftime("%d-%m") }},
+    :width => 100,
     :series => {:submited_posts => {:value => :count_have_posts_between, :caption => "posts"},
       :submited_posts2 => {:value => :count_have_posts2_between, :caption => "posts2"}}
     
@@ -43,8 +49,8 @@ describe "ActiveGraph" do
   
   describe "while based on defaults" do
     before do
-      @graph = Gruff::Bar.new
-      Gruff::Bar.should_receive(:new).and_return(@graph)
+      @graph = Gruff::Bar.new(400)
+      Gruff::Bar.should_receive(:new).with(400).and_return(@graph)
       default_start = ActiveGraph::DEFAULT_START
       default_end = ActiveGraph::DEFAULT_END
       @number_of_periods = default_end - default_start
@@ -77,6 +83,10 @@ describe "ActiveGraph" do
     it "should create the graph" do
       ActiveGraphTestModel.posts_graph.should == @graph
     end
+    
+    it "should set default width" do
+      ActiveGraphTestModel.posts_graph.width.should == 400
+    end
   end
   
   describe "while used with all custom parameters" do
@@ -102,9 +112,13 @@ describe "ActiveGraph" do
       ActiveGraphTestModel.new_posts_graph
     end
     
+    it "should set correct width" do
+      ActiveGraphTestModel.new_posts_graph.width.should == 100
+    end
+    
     describe "and drawing the graph" do
       before do
-        @graph = Gruff::Line.new
+        @graph = Gruff::Line.new(400)
         Gruff::Line.should_receive(:new).and_return(@graph)
       end
       

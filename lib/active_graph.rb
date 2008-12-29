@@ -14,4 +14,5 @@ module ActiveGraph
   DEFAULT_STEP = 1
   DEFAULT_X_AXIS_INTERVAL = 1
   DEFAULT_X_AXIS_METHOD = Proc.new {|x| "#{x} - #{x + ActiveGraph::DEFAULT_X_AXIS_INTERVAL}"}
+  DEFAULT_WIDTH=400
 end

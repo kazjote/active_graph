@@ -13,6 +13,7 @@ module ActiveGraph
       graph_start = options[:start] || ActiveGraph::DEFAULT_START
       graph_end = options[:end] || ActiveGraph::DEFAULT_END
       graph_type = options[:type] || ActiveGraph::DEFAULT_TYPE
+      width = options[:width] || ActiveGraph::DEFAULT_WIDTH
       step = options[:step] || ActiveGraph::DEFAULT_STEP
       x_axis_interval = (options[:x_axis] && options[:x_axis][:interval]) ||
         ActiveGraph::DEFAULT_X_AXIS_INTERVAL
@@ -31,7 +32,7 @@ module ActiveGraph
         local_graph_start = Support.valualize(graph_start)
         local_graph_end = Support.valualize(graph_end)
         periods_count = ((local_graph_end - local_graph_start) / step).ceil
-        g = graph_class.new
+        g = graph_class.new(width)
         
         series.each_pair do |serie_name, serie_options|
           data_method = serie_options[:value]
