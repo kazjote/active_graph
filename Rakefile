@@ -13,7 +13,7 @@ begin
     gemspec.homepage = "http://github.com/kazjote/active_graph"
     gemspec.authors = ["Kacper Bielecki"]
 
-    gemspec.add_dependency "active_support", ">= 3.0.0"
+    gemspec.add_dependency "activesupport", ">= 3.0.0"
     gemspec.add_dependency "metaid"
     gemspec.add_dependency "gruff", ">= 0.3.1"
 
