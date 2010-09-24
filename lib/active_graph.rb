@@ -2,12 +2,8 @@ $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require 'active_graph/active_record_extension'
-require 'rubygems'
-require 'activesupport'
 
 module ActiveGraph
-  VERSION = '0.1.0'
-  
   DEFAULT_START = 0
   DEFAULT_END = 7
   DEFAULT_TYPE = :bar

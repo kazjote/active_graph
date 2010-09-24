@@ -3,27 +3,26 @@ require File.dirname(__FILE__) + '/lib/active_graph'
 
 # Generate all the Rake tasks
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
-$hoe = Hoe.new('active_graph', ActiveGraph::VERSION) do |p|
-  p.developer('Kacper Bielecki', 'kazjote@gmail.com')
-  p.changes              = p.paragraphs_of("History.txt", 0..1).join("\n\n")
-  p.rubyforge_name       = 'activegraph'
-  p.extra_deps         = [
-    ['activesupport','>= 2.0.2'],
-    ['metaid', '>= 1.0'],
-    ['gruff', '>= 0.3.1']
-  ]
-  p.extra_dev_deps = [
-    ['newgem', ">= #{::Newgem::VERSION}"]
-  ]
-  
-  p.clean_globs |= %w[**/.DS_Store tmp *.log]
-  path = (p.rubyforge_name == p.name) ? p.rubyforge_name : "\#{p.rubyforge_name}/\#{p.name}"
-  p.remote_rdoc_dir = File.join(path.gsub(/^#{p.rubyforge_name}\/?/,''), 'rdoc')
-  p.rsync_args = '-av --delete --ignore-errors'
-end
 
-require 'newgem/tasks' # load /tasks/*.rake
-Dir['tasks/**/*.rake'].each { |t| load t }
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "active_graph"
+    gemspec.summary = "Gem which makes filling data for Gruff graphs based on ActiveRecord objects much easier."
+    gemspec.email = "kazjote@gmail.com"
+    gemspec.homepage = "http://github.com/kazjote/active_graph"
+    gemspec.authors = ["Kacper Bielecki"]
+
+    gemspec.add_dependency "active_support", ">= 3.0.0"
+    gemspec.add_dependency "metaid"
+    gemspec.add_dependency "gruff", ">= 0.3.1"
+
+    gemspec.add_development_dependency "rspec", ">= 2.0.0"
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
+end
 
 # TODO - want other tests/tasks run by default? Add them to the list
 # task :default => [:spec, :features]

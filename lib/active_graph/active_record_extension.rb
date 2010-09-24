@@ -1,5 +1,5 @@
-require 'rubygems'
 require 'metaid'
+require 'active_support/all'
 
 module ActiveGraph
   module Support # :nodoc:
